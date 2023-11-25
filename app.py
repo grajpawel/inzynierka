@@ -57,7 +57,7 @@ def split_mp4_into_frame_sequences(mp4_path, output_folder, target_resolution=(1
 
 @app.route('/')
 def index():
-    return send_from_directory('templates', 'index.html')
+    return render_template('index.html')
 
 
 @app.route('/upload', methods=['POST'])
@@ -78,7 +78,7 @@ def upload():
     # print(model.weights)
     split_mp4_into_frame_sequences(f'uploads/{file.filename}', 'output')
 
-    return 'File uploaded successfully'
+    return '<h1 style="color: #000; text-align: center; width: 100%; font-family: \'Arial\', sans-serif;">File uploaded successfully</h1>'
 
 
 if __name__ == '__main__':
