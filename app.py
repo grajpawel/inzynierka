@@ -21,7 +21,7 @@ def upload():
 
     # Save the file to a folder of your choice
     file.save(f'uploads/{file.filename}')
-    model = keras.models.load_model('src/model.hdf5')
+    model = keras.models.load_model('model.hdf5')
     print(model.weights)
 
     
