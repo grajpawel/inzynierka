@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask import send_from_directory
 import numpy as np
 import tensorflow as tf
 import keras
@@ -7,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory('templates', 'index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
