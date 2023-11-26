@@ -65,7 +65,7 @@ def upload():
 
     if file.filename == '':
         return 'No selected file'
-    
+
     file.save(f'uploads/{file.filename}')
     model = keras.models.load_model('model.hdf5')
     # print(model.weights)
