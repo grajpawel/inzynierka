@@ -2,3 +2,4 @@ tensorflow
 flask
 numpy
 keras
+opencv-python
