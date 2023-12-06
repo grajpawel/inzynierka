@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from flask import Flask, render_template, request
 from flask import send_from_directory
 import numpy as np
@@ -13,14 +14,10 @@ app = Flask(__name__)
 def create_directory(directory_path):
     if not os.path.exists(directory_path):
         os.makedirs(directory_path)
-        print(f"Directory '{directory_path}' created successfully.")
-    else:
-        print(f"Directory '{directory_path}' already exists.")
 
 
 def split_mp4_into_frame_sequences(mp4_path, output_folder, target_resolution=(426, 240)):
     model = keras.models.load_model('model.hdf5')
-    print(model.summary())
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -51,20 +48,18 @@ def split_mp4_into_frame_sequences(mp4_path, output_folder, target_resolution=(4
             cv2.imwrite(frame_path, frame)
             images.append(frame)
 
-        file_paths = [
-            os.path.join(sequence_folder, 'frame_00.jpg'),
-            os.path.join(sequence_folder, 'frame_01.jpg'),
-            os.path.join(sequence_folder, 'frame_02.jpg'),
-            os.path.join(sequence_folder, 'frame_03.jpg'),
-            os.path.join(sequence_folder, 'frame_04.jpg')]
+        # file_paths = [
+        #     os.path.join(sequence_folder, 'frame_00.jpg'),
+        #     os.path.join(sequence_folder, 'frame_01.jpg'),
+        #     os.path.join(sequence_folder, 'frame_02.jpg'),
+        #     os.path.join(sequence_folder, 'frame_03.jpg'),
+        #     os.path.join(sequence_folder, 'frame_04.jpg')]
 
-        frames_list = [np.array(Image.open(file_path))
-                       for file_path in file_paths]
+        # frames_list = [np.array(np.asarray(Image.open(file_path), dtype='bfloat16'))
+        #                for file_path in file_paths]
 
-        frames_array = np.array(frames_list)
-        print(frames_array.shape)  # It prints (5, 240, 426, 3)
+        frames_array = np.array(images)
         frames_array = np.expand_dims(frames_array, axis=0)
-        print(frames_array.shape)  # It prints (1, 5, 240, 426, 3)
 
         # keras_list = keras.utils.image_dataset_from_directory(
         #     sequence_folder,
@@ -84,11 +79,10 @@ def split_mp4_into_frame_sequences(mp4_path, output_folder, target_resolution=(4
 
         # keras_list = np.expand_dims(keras_list, axis=0)
 
-        result = model.predict(frames_array)
-        print(result)
+        result = model.predict(frames_array, verbose=0)
 
-        # if (result[0][0] > 0.6 or result[0][1] > 0.6):
-        #     print(result)
+        if (result[0][1] > 0.6):
+            print(result)
 
     cap.release()
 
@@ -112,10 +106,7 @@ def upload():
         return 'No selected file'
 
     file.save(f'uploads/{file.filename}')
-    # print(model.weights)
     split_mp4_into_frame_sequences(f'uploads/{file.filename}', 'output')
-
-    # result = model.predict()
 
     return '<h1 style="color: #000; text-align: center; width: 100%; font-family: \'Arial\', sans-serif;">File uploaded successfully</h1>'
 
