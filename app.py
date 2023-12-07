@@ -1,4 +1,3 @@
-import re
 from flask import Flask, render_template, request, jsonify, make_response, send_from_directory, url_for
 from matplotlib import image
 import numpy as np
@@ -72,7 +71,7 @@ def predict_from_video(mp4_path, output_folder, target_resolution=(426, 240)):
 
         if (result[0][1] > 0.6):
             print(start_frame/fps)
-            goal_sequences.append([f"sequence_{int(start_frame/frames_per_sequence)}/frame_02.jpg", "%0.2f" % (
+            goal_sequences.append([f"sequence_{int(start_frame/frames_per_sequence)}", "%0.2f" % (
                 start_frame/fps), "%0.2f" % ((start_frame+frames_per_sequence)/fps)])
 
     cap.release()
@@ -113,6 +112,8 @@ def upload():
         return make_response("""
     <html>
         <head>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
             <style>
                 body {
                     display: flex;
@@ -157,9 +158,13 @@ def upload():
     html_table = """
 <html>
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
         table {
-            width: 55%;
+            width: 30%;
             border-collapse: collapse;
             margin: 20px;
             font-family: 'Arial', sans-serif;
@@ -172,7 +177,7 @@ def upload():
         th {
             background-color: #f2f2f2;
         }
-        img {
+        .carousel-inner img {
             max-width: 100%;
             max-height: 100%;
             display: block;
@@ -195,31 +200,77 @@ def upload():
         .back-button a:hover {
             background-color: #45a049;
         }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #333;
+        }
+        .carousel-control-prev,
+        .carousel-control-next {
+            background-color: #333;
+            width: 5%;
+        }
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            background-color: #333;
+        }
+        .column1 {
+            width: 10%;
+        }
+        .column2 {
+            width: 90%;
+        }
     </style>
 </head>
 <body>
 <div>
     <table>
         <tr>
-            <th>Time (s)</th>
-            <th>Frame</th>
+            <th class="column1">Timespan(s)</th>
+            <th class="column2">Frames</th>
         </tr>
 """
 
-    for goal_sequence in goal_sequences:
-        img_src = f"<img src='{url_for('output_image', random_string=random_string, filename=goal_sequence[0])}' alt='image'>"
-        html_table += f"<tr><td>{goal_sequence[1]} - {goal_sequence[2]}</td><td>{img_src}</td></tr>"
+# ...
+
+    for index, goal_sequence in enumerate(goal_sequences):
+        html_table += f"""
+    <tr>
+        <td>{goal_sequence[1]} - {goal_sequence[2]}</td>
+        <td>
+            <div id="carouselExample{index}" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_00.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_00.jpg'))}' alt='image'></a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_01.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_01.jpg'))}' alt='image'></a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_02.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_02.jpg'))}' alt='image'></a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_03.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_03.jpg'))}' alt='image'></a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_04.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_04.jpg'))}' alt='image'></a>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExample{index}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExample{index}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </td>
+    </tr>
+    """
+
+# ...
 
     html_table += "</table></div>"
-
-    html_table += """
-    <div class="back-button">
-        <a href="/">Back to Main Page</a>
-    </div>
-</body>
-</html>
-"""
-
     shutil.rmtree(f'uploads')
     # shutil.rmtree(f'output/{random_string}')
 
