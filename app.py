@@ -115,35 +115,39 @@ def upload():
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
             <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
             <style>
-                body {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100vh;
-                    margin: 0;
-                    font-family: 'Arial', sans-serif;
-                }
-                h1 {
-                    text-align: center;
-                }
-                .back-button {
-                    margin-top: 20px;
-                    text-align: center;
-                    display: block;
-                }
-                .back-button a {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    background-color: #4CAF50;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    transition: background-color 0.3s;
-                }
-                .back-button a:hover {
-                    background-color: #45a049;
-                }
-            </style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button a:hover {
+            background-color: #45a049;
+        }
+    </style>
         </head>
         <body>
             <div>
@@ -230,8 +234,6 @@ def upload():
         </tr>
 """
 
-# ...
-
     for index, goal_sequence in enumerate(goal_sequences):
         html_table += f"""
     <tr>
@@ -267,8 +269,6 @@ def upload():
         </td>
     </tr>
     """
-
-# ...
 
     html_table += "</table></div>"
     shutil.rmtree(f'uploads')
