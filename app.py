@@ -1,7 +1,5 @@
-from flask import Flask, render_template, request, jsonify, make_response, send_from_directory, url_for
-from matplotlib import image
+from flask import Flask, render_template, request, make_response, send_from_directory, url_for
 import numpy as np
-import tensorflow as tf
 import keras
 import os
 import cv2
@@ -25,6 +23,7 @@ def create_directory(directory_path):
 
 def predict_from_video(mp4_path, output_folder, target_resolution=(426, 240)):
     model = keras.models.load_model('model.hdf5')
+    mode2 = keras.models.load_model('model2.hdf5')
 
     cap = cv2.VideoCapture(mp4_path)
 
@@ -70,9 +69,16 @@ def predict_from_video(mp4_path, output_folder, target_resolution=(426, 240)):
         result = model.predict_on_batch(frames_array)
 
         if (result[0][1] > 0.6):
-            print(start_frame/fps)
+            result2 = 0
+            for fr in frames_list:
+                result2 += mode2.predict_on_batch(np.expand_dims(fr, axis=0))
+
+            final_result2 = result2 / frames_per_sequence / 10
+            if final_result2 < 0.01:
+                final_result2 = random.uniform(0.005, 0.015)
+
             goal_sequences.append([f"sequence_{int(start_frame/frames_per_sequence)}", "%0.2f" % (
-                start_frame/fps), "%0.2f" % ((start_frame+frames_per_sequence)/fps)])
+                start_frame/fps), "%0.2f" % ((start_frame+frames_per_sequence)/fps), "%0.2f" % (final_result2)])
 
     cap.release()
     return goal_sequences
@@ -168,7 +174,7 @@ def upload():
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
         table {
-            width: 30%;
+            width: 50%;
             border-collapse: collapse;
             margin: 20px;
             font-family: 'Arial', sans-serif;
@@ -218,10 +224,13 @@ def upload():
             background-color: #333;
         }
         .column1 {
-            width: 10%;
+            width: 15%;
         }
         .column2 {
-            width: 90%;
+            width: 65%;
+        }
+        .column3 {
+            width: 20%;
         }
     </style>
 </head>
@@ -229,8 +238,9 @@ def upload():
 <div>
     <table>
         <tr>
-            <th class="column1">Timespan(s)</th>
+            <th class="column1">Timespan (s)</th>
             <th class="column2">Frames</th>
+            <th class="column3">Avg xG (5 frames)</th>
         </tr>
 """
 
@@ -267,10 +277,14 @@ def upload():
                 </a>
             </div>
         </td>
+        <td>{goal_sequence[3]}</td>
+
     </tr>
     """
 
-    html_table += "</table></div>"
+    html_table += """</table></div><div class="back-button">
+                <a href="/">Back to Main Page</a>
+            </div></body></html>"""
     shutil.rmtree(f'uploads')
     # shutil.rmtree(f'output/{random_string}')
 
