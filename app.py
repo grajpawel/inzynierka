@@ -162,6 +162,7 @@ def upload():
         return make_response("""
         <html>
             <head>
+                <title>No file selected</title>
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
                 <style>
@@ -201,7 +202,7 @@ def upload():
             </head>
             <body>
                 <div>
-                    <h1>No selected file</h1>
+                    <h1>No file selected</h1>
                 </div>
                 <div class="back-button">
                     <a href="/">Back to Main Page</a>
@@ -220,6 +221,7 @@ def upload():
         return make_response("""
     <html>
         <head>
+            <title>No goals found</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
             <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
             <style>
@@ -270,6 +272,7 @@ def upload():
     html_table = """
 <html>
 <head>
+    <title>Goal prediction result</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
