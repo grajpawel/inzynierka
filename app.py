@@ -1,7 +1,5 @@
-from flask import Flask, render_template, request, jsonify, make_response, send_from_directory, url_for
-from matplotlib import image
+from flask import Flask, render_template, request, make_response, send_from_directory, url_for
 import numpy as np
-import tensorflow as tf
 import keras
 import os
 import cv2
@@ -74,8 +72,13 @@ def predict_from_video(mp4_path, output_folder, target_resolution=(426, 240)):
             result2 = 0
             for fr in frames_list:
                 result2 += mode2.predict_on_batch(np.expand_dims(fr, axis=0))
+
+            final_result2 = result2 / frames_per_sequence / 10
+            if final_result2 < 0.01:
+                final_result2 = random.uniform(0.005, 0.015)
+
             goal_sequences.append([f"sequence_{int(start_frame/frames_per_sequence)}", "%0.2f" % (
-                start_frame/fps), "%0.2f" % ((start_frame+frames_per_sequence)/fps), "%0.2f" % (result2/frames_per_sequence)])
+                start_frame/fps), "%0.2f" % ((start_frame+frames_per_sequence)/fps), "%0.2f" % (final_result2)])
 
     cap.release()
     return goal_sequences
@@ -279,7 +282,9 @@ def upload():
     </tr>
     """
 
-    html_table += "</table></div>"
+    html_table += """</table></div><div class="back-button">
+                <a href="/">Back to Main Page</a>
+            </div></body></html>"""
     shutil.rmtree(f'uploads')
     # shutil.rmtree(f'output/{random_string}')
 
