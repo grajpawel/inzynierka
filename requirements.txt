@@ -1,4 +1,6 @@
 flask
 numpy
 keras
-opencv-python
+opencv-python-headless
+tensorflow
+pillow
