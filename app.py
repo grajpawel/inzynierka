@@ -97,6 +97,10 @@ def output_image(random_string, filename):
 @app.route('/upload', methods=['POST'])
 def upload():
     random_string = generate_random_string(10)
+    if os.path.exists(f'uploads'):
+        shutil.rmtree(f'uploads')
+    if os.path.exists(f'output'):
+        shutil.rmtree(f'output')
     create_directory(f'uploads/{random_string}')
     create_directory(f'output/{random_string}')
 
