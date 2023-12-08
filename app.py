@@ -105,12 +105,110 @@ def upload():
     create_directory(f'output/{random_string}')
 
     if 'file' not in request.files:
-        return 'No file part'
+        return make_response("""
+        <html>
+            <head>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+                <style>
+                    body {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        margin: 0;
+                        font-family: 'Arial', sans-serif;
+                    }
+
+                    h1 {
+                        text-align: center;
+                    }
+
+                    .back-button {
+                        margin-top: 20px;
+                        text-align: center;
+                    }
+
+                    .back-button a {
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #4CAF50;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        transition: background-color 0.3s;
+                    }
+
+                    .back-button a:hover {
+                        background-color: #45a049;
+                    }
+                </style>
+            </head>
+            <body>
+                <div>
+                    <h1>No file part</h1>
+                </div>
+                <div class="back-button">
+                    <a href="/">Back to Main Page</a>
+                </div>
+            </body>
+        </html>
+        """)
 
     file = request.files['file']
 
     if file.filename == '':
-        return 'No selected file'
+        return make_response("""
+        <html>
+            <head>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+                <style>
+                    body {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        margin: 0;
+                        font-family: 'Arial', sans-serif;
+                    }
+
+                    h1 {
+                        text-align: center;
+                    }
+
+                    .back-button {
+                        margin-top: 20px;
+                        text-align: center;
+                    }
+
+                    .back-button a {
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #4CAF50;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        transition: background-color 0.3s;
+                    }
+
+                    .back-button a:hover {
+                        background-color: #45a049;
+                    }
+                </style>
+            </head>
+            <body>
+                <div>
+                    <h1>No selected file</h1>
+                </div>
+                <div class="back-button">
+                    <a href="/">Back to Main Page</a>
+                </div>
+            </body>
+        </html>
+        """)
 
     upload_file_path = os.path.join(
         "uploads", os.path.join(random_string, file.filename))
@@ -290,7 +388,6 @@ def upload():
                 <a href="/">Back to Main Page</a>
             </div></body></html>"""
     shutil.rmtree(f'uploads')
-    # shutil.rmtree(f'output/{random_string}')
 
     return make_response(html_table)
 
