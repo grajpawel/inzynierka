@@ -31,7 +31,7 @@ def predict_from_video(mp4_path, output_folder, target_resolution=(426, 240)):
     fps = int(cap.get(cv2.CAP_PROP_FPS))
 
     frames_per_sequence = 5
-    goal_sequences = []
+    shot_sequences = []
 
     for start_frame in range(0, frame_count - frames_per_sequence + 1, frames_per_sequence):
         sequence_folder = os.path.join(
@@ -77,11 +77,11 @@ def predict_from_video(mp4_path, output_folder, target_resolution=(426, 240)):
             if final_result2 < 0.01:
                 final_result2 = random.uniform(0.005, 0.015)
 
-            goal_sequences.append([f"sequence_{int(start_frame/frames_per_sequence)}", "%0.2f" % (
+            shot_sequences.append([f"sequence_{int(start_frame/frames_per_sequence)}", "%0.2f" % (
                 start_frame/fps), "%0.2f" % ((start_frame+frames_per_sequence)/fps), "%0.2f" % (final_result2)])
 
     cap.release()
-    return goal_sequences
+    return shot_sequences
 
 
 @app.route('/')
@@ -216,12 +216,12 @@ def upload():
     output_file_path = os.path.join("output", random_string)
 
     file.save(upload_file_path)
-    goal_sequences = predict_from_video(upload_file_path, output_file_path)
-    if len(goal_sequences) == 0:
+    shot_sequences = predict_from_video(upload_file_path, output_file_path)
+    if len(shot_sequences) == 0:
         return make_response("""
     <html>
         <head>
-            <title>No goals found</title>
+            <title>No shots found</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
             <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
             <style>
@@ -261,7 +261,7 @@ def upload():
         </head>
         <body>
             <div>
-            <h1>No goals found</h1> </div>
+            <h1>No shots found</h1> </div>
             <div class="back-button">
                 <a href="/">Back to Main Page</a>
             </div>
@@ -272,7 +272,7 @@ def upload():
     html_table = """
 <html>
 <head>
-    <title>Goal prediction result</title>
+    <title>Shot prediction result</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -349,27 +349,27 @@ def upload():
         </tr>
 """
 
-    for index, goal_sequence in enumerate(goal_sequences):
+    for index, shot_sequence in enumerate(shot_sequences):
         html_table += f"""
     <tr>
-        <td>{goal_sequence[1]} - {goal_sequence[2]}</td>
+        <td>{shot_sequence[1]} - {shot_sequence[2]}</td>
         <td>
             <div id="carouselExample{index}" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_00.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_00.jpg'))}' alt='image'></a>
+                        <a href='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_00.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_00.jpg'))}' alt='image'></a>
                     </div>
                     <div class="carousel-item">
-                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_01.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_01.jpg'))}' alt='image'></a>
+                        <a href='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_01.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_01.jpg'))}' alt='image'></a>
                     </div>
                     <div class="carousel-item">
-                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_02.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_02.jpg'))}' alt='image'></a>
+                        <a href='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_02.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_02.jpg'))}' alt='image'></a>
                     </div>
                     <div class="carousel-item">
-                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_03.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_03.jpg'))}' alt='image'></a>
+                        <a href='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_03.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_03.jpg'))}' alt='image'></a>
                     </div>
                     <div class="carousel-item">
-                        <a href='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_04.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(goal_sequence[0]+'/frame_04.jpg'))}' alt='image'></a>
+                        <a href='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_04.jpg'))}' data-lightbox='{random_string}'><img src='{url_for('output_image', random_string=random_string, filename=(shot_sequence[0]+'/frame_04.jpg'))}' alt='image'></a>
                     </div>
                 </div>
                 <a class="carousel-control-prev" href="#carouselExample{index}" role="button" data-slide="prev">
@@ -382,7 +382,7 @@ def upload():
                 </a>
             </div>
         </td>
-        <td>{goal_sequence[3]}</td>
+        <td>{shot_sequence[3]}</td>
 
     </tr>
     """
